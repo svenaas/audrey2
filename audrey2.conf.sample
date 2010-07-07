@@ -1,0 +1,24 @@
+# Sample audrey2.conf
+
+# The default location for this file is /etc/audrey2/audrey2.conf, but an alternate location
+# may be specified with the --config command-line option.
+
+#
+# Folders for recipes and themes
+#
+# Suggested locations:
+#   /etc/audrey2/recipes
+#   /etc/audrey2/themes
+recipes_folder:  ./recipes
+themes_folder:   ./themes
+
+# User agent to impersonate when retrieving themes. Please use with discretion.
+#user_agent:      Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3 (.NET CLR 1.1.4322)
+
+#
+# Not yet implemented:
+#
+# email_errors_to: test@test.com
+# log_file:        /var/log/audrey2.log
+# log_level:       debug
+

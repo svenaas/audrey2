@@ -1,6 +1,76 @@
-= audrey2
+= Audrey 2.0
 
-Description goes here.
+Audrey 2.0 is a gem for feed processing and aggregation. 
+
+== Please note: This should be considered an Alpha release
+
+The initial codebase is an adaptation of several other prototypes. It suffers from
+severe shortages of documentation and testing. Both are coming soon.
+
+== Installation
+
+gem install audrey2
+
+== Usage
+
+Audrey 2.0 installs a command-line script, feedme, which can be fed one or more recipes:
+
+feedme recipe [recipe2] [recipe3] ...
+
+Each recipe lists one or more feeds and identifies a theme to be used at output. When 
+feedme is run it aggregates the feeds according to the recipe and generates themed
+output. 
+
+== Requirements
+
+Audrey 2.0 depends on the feed_normalizer and haml gems. 
+
+== Configuration
+
+* A configuration file which is located by default at /etc/audrey2.conf. This location 
+can be overridden with the command line --config option. The configuration file is in
+YAML format and must at minimum include the following lines:
+  * recipes_folder:  ./recipes
+  * themes_folder:   ./themes
+* A recipes folder specified in the configuration file and containing at least one recipe. 
+* A themes folder specified in the configuration file and containing at leastone theme.
+
+== Recipes
+
+Each recipe is a YAML-format file located in the recipes folder specified in Audrey 2.0 config. 
+The filename must match the command line argument used when passing the recipe to the feedme
+command-line program. By convention recipe filenames omit an extension. 
+
+Each recipe must
+
+* List one or more feeds in an array of hashes formatted like this:
+
+feeds:
+ -
+  name: nytimes
+  url: http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml  
+ - 
+  name: bostonglobe
+  url: http://syndication.boston.com/topstories.xml
+
+* Identify a theme
+  
+theme: mytheme
+
+* Identify an output filename and path
+
+output_file: entries.html
+
+== Themes
+
+Themes are located in eponymous folders within the themes folder identified in Audrey 2.0 config.
+A theme folder must contain a single HAML template named entries.haml. This template is rendered 
+once for each entry in the feed aggregation. The rendered entries are concatenated and output at
+the path specified in the recipe.
+
+A theme folder may also contain a file named helpers.rb. When this file is present its code is
+loaded into the HAML rendering scope, making any methods defined within available during 
+rendering of entries.haml. 
 
 == Note on Patches/Pull Requests
  

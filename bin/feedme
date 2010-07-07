@@ -1,0 +1,45 @@
+#!/usr/bin/ruby
+
+require 'rubygems'
+require 'audrey2'
+require 'optparse'
+
+options = {}
+
+opts = OptionParser.new do |opts|
+  opts.banner = "Usage: feedme [OPTIONS] recipes"
+  
+  options[:config] = '/etc/audrey2/audrey2.conf'
+  opts.on( '--config CONFIGFILE', "Location of config file", "(default: /etc/audrey2/audrey2.conf)" )  do |f|
+    options[:config] = f
+  end
+
+  opts.on_tail( '-h', '--help', 'Display this screen' ) do
+    puts opts
+    exit
+  end
+end
+
+begin 
+  opts.parse! ARGV
+  options
+rescue OptionParser::InvalidOption => e
+  $stderr.puts e
+  $stderr.puts opts
+  exit 1
+rescue OptionParser::MissingArgument => e
+  $stderr.puts e
+  $stderr.puts opts
+  exit 1
+end
+
+recipes = ARGV
+if recipes.length == 0
+  $stderr.puts "You must specify at least one recipe to feed me"
+  $stderr.puts opts
+  exit 1
+end
+
+audrey2 = Audrey2::Aggregator.new(options[:config])
+
+recipes.each { |recipe| audrey2.feed_me(recipe) }
