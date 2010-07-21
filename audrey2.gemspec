@@ -25,6 +25,9 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "VERSION",
+     "audrey2.conf.sample",
+     "audrey2.gemspec",
+     "bin/feedme",
      "lib/audrey2.rb"
   ]
   s.homepage = %q{http://github.com/svenaas/audrey2}
