@@ -17,6 +17,7 @@ module Audrey2
       init_theme(recipe['theme'])      
       output_file = recipe['output_file']
       verify_output_file(output_file)
+      max_entries = recipe['max_entries'] || 1000
       
       # Download and parse the feeds
       entry_sources = {}
@@ -35,7 +36,7 @@ module Audrey2
       output = ''
       engine ||= Haml::Engine.new(@entry_template)
       
-      entries[0..@max_entries - 1].each do |entry| 
+      entries[0..max_entries - 1].each do |entry| 
         output << engine.render(scope, :entry => entry, :source => entry_sources[entry])
       end
       
@@ -161,7 +162,6 @@ module Audrey2
       end
       
       @user_agent = config['user_agent'] || 'Audrey 2.0 Feed Aggregator'
-      @max_entries = config['max_entries'] || 1000
       @sort = config['sort'] || 'reverse-chronological'
     end
   end    
