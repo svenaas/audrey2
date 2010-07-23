@@ -55,7 +55,7 @@ module Audrey2
       end   
       if File.exist?(output_file)
         if ! File.writable? output_file
-          $stderr.puts "ERROR: Output file #{output_folder} is not writable"
+          $stderr.puts "ERROR: Output file #{output_file} is not writable"
           exit(1) 
         end
       end
