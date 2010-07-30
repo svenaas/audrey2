@@ -44,7 +44,6 @@ module Audrey2
         File.open(output_file, 'w') { |f| f << output }
 
       rescue Exception => e
-        $stderr.puts "An exception occurred while running recipe #{recipe_name}:\n\n#{e}\n#{e.backtrace}"
         if @email
           email(<<-EOF
 An exception occurred while running recipe #{recipe_name}
@@ -57,6 +56,7 @@ Backtrace:
 EOF
           )
         else
+          $stderr.puts "An exception occurred while running recipe #{recipe_name}:\n\n#{e}\n#{e.backtrace}"
           exit(1)
         end
       end
