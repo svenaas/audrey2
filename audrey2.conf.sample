@@ -12,13 +12,34 @@
 recipes_folder:  ./recipes
 themes_folder:   ./themes
 
+#
 # User agent to impersonate when retrieving themes. Please use with discretion.
-#user_agent:      Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3 (.NET CLR 1.1.4322)
+#
+# user_agent:      Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3 (.NET CLR 1.1.4322)
+
+#
+# Email notification of exceptions
+#
+# This feature requires Mikel Lindsaar's 'mail' gem (http://github.com/mikel/mail)
+#
+# If you want to use sendmail instead of smtp then set via this way:
+#  via: sendmail
+# and omit the smtp hash.
+#
+# email:
+#   to: test@test.com
+#   from: Audrey 2.0 <noreply@test.com>
+#   via: smtp
+#   smtp:
+#     server: smtp.test.com
+#     port: 25
+#     user_name: test
+#     password: password
+#     domain: test.com
 
 #
 # Not yet implemented:
 #
-# email_errors_to: test@test.com
 # log_file:        /var/log/audrey2.log
 # log_level:       debug
 
