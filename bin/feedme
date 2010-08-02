@@ -38,8 +38,7 @@ if recipes.length == 0
   $stderr.puts "You must specify at least one recipe to feed me"
   $stderr.puts opts
   exit 1
+else
+  audrey2 = Audrey2::Aggregator.new(options[:config])
+  recipes.each { |recipe| audrey2.feed_me(recipe) }
 end
-
-audrey2 = Audrey2::Aggregator.new(options[:config])
-
-recipes.each { |recipe| audrey2.feed_me(recipe) }

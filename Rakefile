@@ -12,6 +12,8 @@ begin
     gem.authors     = ["Sven Aas"]
     gem.add_dependency "feed-normalizer", "~>1.5.2"
     gem.add_dependency "haml", "~>3.0.13"    
+    gem.add_development_dependency "shoulda", ">= 2.11.1"
+    gem.add_development_dependency "mocha", ">= 0.9.8"    
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
