@@ -4,6 +4,25 @@ require 'feed-normalizer'
 require 'open-uri'
 require 'haml'
 
+module HashExtensions # Adapted from http://gist.github.com/151324 by Avdi Grimm and Paul Berry 
+  def symbolize_keys
+    inject({}) do |acc, (k,v)|
+      key = String === k ? k.to_sym : k
+      value = case v
+        when Hash 
+          v.symbolize_keys
+        when Array
+          v.collect { |e| Hash === e ? e.symbolize_keys : e }
+        else
+          v
+        end
+      acc[key] = value
+      acc
+    end
+  end
+end
+Hash.send(:include, HashExtensions)
+
 module Audrey2
 
   class Aggregator
@@ -15,14 +34,14 @@ module Audrey2
       begin
         # Load recipe and theme and make sure everything is in order
         recipe = load_recipe(recipe_name)
-        init_theme(recipe['theme'])
-        output_file = recipe['output_file']
+        init_theme(recipe[:theme])
+        output_file = recipe[:output_file]
         verify_output_file(output_file)
-        max_entries = recipe['max_entries'] || 1000
+        max_entries = recipe[:max_entries] || 1000
 
         # Download and parse the feeds
         entry_sources = {}
-        feeds = recipe['feeds'].collect { |feed| parse_feed(feed, entry_sources) }
+        feeds = recipe[:feeds].collect { |feed| parse_feed(feed, entry_sources) }
 
         # Aggregate and sort the entries
         entries = []
@@ -67,24 +86,24 @@ EOF
       return unless @email
 
       mail = Mail.new
-      mail[:from] =    @email['from']
-      mail[:to] =      @email['to']
+      mail[:from] =    @email[:from]
+      mail[:to] =      @email[:to]
       mail[:subject] = "[AUDREY 2.0] Exception Notification"
       mail[:body]    = e
 
-      case @email['via']
-      when 'sendmail'
+      case @email[:via]
+      when :sendmail
         mail.delivery_method :sendmail
-      when 'smtp'
-        raise "Missing SMTP configuration" unless @email['smtp']
+      when :smtp
+        raise "Missing SMTP configuration" unless @email[:smtp]
         smtp = {
-          :address        => @email['smtp']['server']         || 'localhost',
-          :port           => @email['smtp']['port']           || 25
+          :address        => @email[:smtp][:server]         || 'localhost',
+          :port           => @email[:smtp][:port]           || 25
         }
-        smtp[:domain]         = @email['smtp']['domain']         if @email['smtp']['domain']
-        smtp[:user_name]      = @email['smtp']['user_name']      if @email['smtp']['user_name']
-        smtp[:password]       = @email['smtp']['password']       if @email['smtp']['password']
-        smtp[:authentication] = @email['smtp']['authentication'] if @email['smtp']['authentication']
+        smtp[:domain]         = @email[:smtp][:domain]         if @email[:smtp][:domain]
+        smtp[:user_name]      = @email[:smtp][:user_name]      if @email[:smtp][:user_name]
+        smtp[:password]       = @email[:smtp][:password]       if @email[:smtp][:password]
+        smtp[:authentication] = @email[:smtp][:authentication] if @email[:smtp][:authentication]
         mail.delivery_method :smtp, smtp
       end
 
@@ -147,19 +166,19 @@ EOF
     def parse_feed(feed, entry_sources)
       remote_feed = nil
       begin
-        remote_feed = open(feed['url'], "User-Agent" => @user_agent)
+        remote_feed = open(feed[:url], "User-Agent" => @user_agent)
       rescue Exception => e
-        raise "Exception occurred when opening feed #{feed['name']} at #{feed['url']}:\n\n" + e.to_s
+        raise "Exception occurred when opening feed #{feed[:name]} at #{feed[:url]}:\n\n" + e.to_s
       end
 
       parsed_feed = nil
-      begin
+      begin :test
         parsed_feed = FeedNormalizer::FeedNormalizer.parse remote_feed
       rescue Exception => e
-        raise "Exception occurred when parsing feed #{feed['name']} which was downloaded from #{feed['url']}:\n\n" + e.to_s
+        raise "Exception occurred when parsing feed #{feed[:name]} which was downloaded from #{feed[:url]}:\n\n" + e.to_s
       end
 
-      raise "Feed #{feed['name']} at #{feed['url']} does not appear to be a parsable feed" unless parsed_feed
+      raise "Feed #{feed[:name]} at #{feed[:url]} does not appear to be a parsable feed" unless parsed_feed
 
       parsed_feed.entries.each { |entry| entry_sources[entry] = feed }
 
@@ -175,7 +194,7 @@ EOF
         $stderr.puts "ERROR: Recipe file #{recipefile} is not readable"
         exit(1)
       end
-      YAML::load_file(recipefile)
+      YAML::load_file(recipefile).symbolize_keys
     end
 
     def init_config(configfile)
@@ -187,9 +206,9 @@ EOF
         exit(1)
       end
 
-      config = YAML::load_file(configfile)
+      config = YAML::load_file(configfile).symbolize_keys
 
-      @recipes_folder = config['recipes_folder']
+      @recipes_folder = config[:recipes_folder]
       if ! File.exist? @recipes_folder
         $stderr.puts "ERROR: Recipes folder #{@recipes_folder} does not exist"
         exit(1)
@@ -198,7 +217,7 @@ EOF
         exit(1)
       end
 
-      @themes_folder = config['themes_folder']
+      @themes_folder = config[:themes_folder]
       if ! File.exist? @themes_folder
         $stderr.puts "ERROR: Themes folder #{@themes_folder} does not exist"
         exit(1)
@@ -207,10 +226,10 @@ EOF
         exit(1)
       end
 
-      @user_agent = config['user_agent'] || 'Audrey 2.0 Feed Aggregator'
-      @sort = config['sort'] || 'reverse-chronological'
+      @user_agent = config[:user_agent] || 'Audrey 2.0 Feed Aggregator'
+      @sort = config[:sort] || 'reverse-chronological'
 
-      if @email = config['email']
+      if @email = config[:email]
         gem 'mail', '~> 2.2.5'
         require 'mail'
         # TODO: Check for required/consistent email config
