@@ -106,6 +106,43 @@ class TestConfig < Test::Unit::TestCase
         end
       end
     end
+    
+    context "with a complete config" do
+      setup do
+        @config
+        File.stubs(:exist?).with('configfile').returns(true)
+        File.stubs(:readable?).with('configfile').returns(true)        
+        YAML.stubs(:load_file).with('configfile').returns({
+          'recipes_folder' => 'recipes_folder',
+          'themes_folder'  => 'themes_folder',
+          'user_agent'     => 'user_agent',
+          'sort'           => 'sort',
+          'email'          => 'email'
+        })
+        File.stubs(:exist?).with('recipes_folder').returns(true)
+        File.stubs(:readable?).with('recipes_folder').returns(true)  
+        File.stubs(:exist?).with('themes_folder').returns(true)
+        File.stubs(:readable?).with('themes_folder').returns(true) 
+        @aggregator = Audrey2::Aggregator.new('configfile')                     
+      end
 
+      should "return a valid aggregator" do
+        assert_not_nil @aggregator
+      end
+
+      should "use the specified user agent" do
+        assert_equal 'user_agent', @aggregator.instance_variable_get('@user_agent')
+      end
+
+      should "use the specified sort" do
+        assert_equal 'sort', @aggregator.instance_variable_get('@sort')
+      end
+
+      # TODO: Fix this one later once email config consistency checking (and testing) are implemented
+      should "setup email" do
+        assert_equal 'email', @aggregator.instance_variable_get('@email')
+      end
+      
+    end    
   end
 end
