@@ -31,24 +31,49 @@ class TestThemes < Test::Unit::TestCase
       File.stubs(:exist?).with(outputfile).returns(false)
     end
 
-    context "and a nonexistent theme file" do
+    context "and a nonexistent theme folder" do
       should 'report error and exit' do
-        themefile = File.join('themes_folder', 'theme')
-        File.expects(:exist?).with(themefile).returns(false)
+        theme_path = File.join('themes_folder', 'theme')
+        File.expects(:exist?).with(theme_path).returns(false)
         err = capture_stderr { assert_raise(SystemExit) { @aggregator.feed_me('recipe') } }
-        assert_match /ERROR: Theme #{themefile} does not exist/, err.string
+        assert_match /ERROR: Theme #{theme_path} does not exist/, err.string
       end
     end
 
-    context "and an unreadable recipe file" do
+    context "and an unreadable theme folder" do
       should 'report error and exit' do
-        themefile = File.join('themes_folder', 'theme')
-        File.stubs(:exist?).with(themefile).returns(true)
-        File.expects(:readable?).with(themefile).returns(false)
+        theme_path = File.join('themes_folder', 'theme')
+        File.stubs(:exist?).with(theme_path).returns(true)
+        File.expects(:readable?).with(theme_path).returns(false)
         err = capture_stderr { assert_raise(SystemExit) { @aggregator.feed_me('recipe') } }
-        assert_match /ERROR: Theme #{themefile} is not readable/, err.string
+        assert_match /ERROR: Theme #{theme_path} is not readable/, err.string
       end
     end
 
+    context "and a valid theme folder" do
+      setup do
+        theme_path = File.join('themes_folder', 'theme')        
+        File.stubs(:exist?).with(theme_path).returns(true)
+        File.stubs(:readable?).with(theme_path).returns(true)
+        @entry_template_path = File.join(theme_path, 'entry.haml')
+      end
+      
+      context "and a nonexistent entry template file" do
+        should 'report error and exit' do
+          File.expects(:exist?).with(@entry_template_path).returns(false)
+          err = capture_stderr { assert_raise(SystemExit) { @aggregator.feed_me('recipe') } }
+          assert_match /ERROR: Theme theme does not include an entry template \(entry\.haml\)/, err.string
+        end
+      end
+
+      context "and an unreadable entry template file" do
+        should 'report error and exit' do
+          File.stubs(:exist?).with(@entry_template_path).returns(true)
+          File.expects(:readable?).with(@entry_template_path).returns(false)
+          err = capture_stderr { assert_raise(SystemExit) { @aggregator.feed_me('recipe') } }
+          assert_match /ERROR: Entry template #{@entry_template_path} is not readable/, err.string
+        end
+      end
+    end
   end
 end

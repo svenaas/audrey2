@@ -95,8 +95,9 @@ module Audrey2
         end
 
         File.open(output_file, 'w') { |f| f << output }
-
       rescue Exception => e
+        # NOTE: This also catches SystemExit as can be raise by Kernel#exit when recipes
+        # and themes are loaded and verified. Is it good to handle those events here? Perhaps ...
         if @email
           email(<<-EOF
 An exception occurred while running recipe #{recipe_name}
