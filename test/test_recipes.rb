@@ -92,6 +92,8 @@ class TestRecipes < Test::Unit::TestCase
           assert_match /ERROR: Output file #{@outputfile} is not writable/, err.string
         end
       end
+      
+      # TODO: Verify max_entries behavior
     end
   end
 end
