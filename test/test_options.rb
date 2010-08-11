@@ -40,8 +40,7 @@ class TestOptions < Test::Unit::TestCase
       setup { @args = ['--invalid'] }
       
       should 'report error, print usage, and exit' do
-        Audrey2::Options.expects(:exit).with(1)
-        err = capture_stderr { Audrey2::Options.parse(@args) }
+        err = capture_stderr { assert_raise(SystemExit) { Audrey2::Options.parse(@args) } }
         assert err.string =~ /invalid option: --invalid/
         assert err.string =~ /Usage:/
       end
@@ -51,8 +50,7 @@ class TestOptions < Test::Unit::TestCase
       setup { @args = ['--config'] }
       
       should 'report error, print usage, and exit' do
-        Audrey2::Options.expects(:exit).with(1)
-        err = capture_stderr { Audrey2::Options.parse(@args) }
+        err = capture_stderr { assert_raise(SystemExit) { Audrey2::Options.parse(@args) } }
         assert err.string =~ /missing argument: --config/
         assert err.string =~ /Usage:/
       end
@@ -62,8 +60,7 @@ class TestOptions < Test::Unit::TestCase
       setup { @args = ['--help']}
 
       should 'print usage and exit' do
-        Audrey2::Options.expects(:exit).with()
-        out = capture_stdout { Audrey2::Options.parse(@args) }
+        out = capture_stdout { assert_raise(SystemExit) { Audrey2::Options.parse(@args) } }
         assert out.string =~ /Usage:/
       end
     end
