@@ -5,12 +5,12 @@ require 'open-uri'
 require 'haml'
 require 'optparse'
 
-module HashExtensions # Adapted from http://gist.github.com/151324 by Avdi Grimm and Paul Berry 
+module HashExtensions # Adapted from http://gist.github.com/151324 by Avdi Grimm and Paul Berry
   def symbolize_keys
     inject({}) do |acc, (k,v)|
       key = String === k ? k.to_sym : k
       value = case v
-        when Hash 
+        when Hash
           v.symbolize_keys
         when Array
           v.collect { |e| Hash === e ? e.symbolize_keys : e }
@@ -41,18 +41,18 @@ module Audrey2
           puts opts
           exit
         end
-          
-        begin 
+
+        begin
           opts.parse! args
           options
         rescue OptionParser::ParseError => e
           warn e.message
           $stderr.puts opts
           exit 1
-        end        
+        end
       end
-      
-      options      
+
+      options
     end
   end
 
@@ -183,7 +183,7 @@ EOF
       @helper_code = nil
       if File.exist? helper_file
         if ! File.readable? helper_file
-          $stderr.puts "ERROR: Helper file #{helper_file} is not readable"
+          $stderr.puts "ERROR: Helpers file #{helper_file} is not readable"
           exit(1)
         end
         @helper_code = File.open(helper_file) { |f| f.read }
@@ -229,9 +229,9 @@ EOF
         $stderr.puts "ERROR: Recipe file #{recipefile} is not readable"
         exit(1)
       end
-      
+
       recipe = {}
-      
+
       begin
         recipe = YAML::load_file(recipefile).symbolize_keys
       rescue Exception => e
@@ -239,7 +239,7 @@ EOF
         $stderr.puts e
         exit(1)
       end
-      
+
       recipe
     end
 
@@ -253,7 +253,7 @@ EOF
       end
 
       config = {}
-      
+
       begin
         config = YAML::load_file(configfile).symbolize_keys
       rescue Exception => e
