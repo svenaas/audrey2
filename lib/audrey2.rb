@@ -3,6 +3,7 @@ require 'yaml'
 require 'feed-normalizer'
 require 'open-uri'
 require 'haml'
+require 'optparse'
 
 module HashExtensions # Adapted from http://gist.github.com/151324 by Avdi Grimm and Paul Berry 
   def symbolize_keys
@@ -24,6 +25,37 @@ end
 Hash.send(:include, HashExtensions)
 
 module Audrey2
+  class Options
+    def self.parse(args)
+      options = {}
+
+      opts = OptionParser.new do |opts|
+        opts.banner = "Usage: feedme [OPTIONS] recipes"
+
+        options[:config] = '/etc/audrey2.conf'
+        opts.on( '--config CONFIGFILE', "Location of config file", "(default: /etc/audrey2.conf)" )  do |f|
+          options[:config] = f
+        end
+
+        opts.on_tail( '-h', '--help', 'Display this screen' ) do
+          puts opts
+          exit
+        end
+          
+        begin 
+          opts.parse! args
+          options
+        rescue OptionParser::ParseError => e
+          warn e.message
+          $stderr.puts opts
+          exit 1
+        end        
+      end
+      
+      options      
+    end
+  end
+
 
   class Aggregator
     def initialize(configfile)
