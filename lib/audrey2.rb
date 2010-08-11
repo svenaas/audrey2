@@ -238,7 +238,15 @@ EOF
         exit(1)
       end
 
-      config = YAML::load_file(configfile).symbolize_keys
+      config = {}
+      
+      begin
+        config = YAML::load_file(configfile).symbolize_keys
+      rescue Exception => e
+        $stderr.puts "ERROR: Problem parsing configuration file #{configfile}"
+        $stderr.puts e
+        exit(1)
+      end
 
       @recipes_folder = config[:recipes_folder]
       if ! File.exist? @recipes_folder
