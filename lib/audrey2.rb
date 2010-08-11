@@ -220,13 +220,24 @@ EOF
     def load_recipe(recipe)
       recipefile = File.join(@recipes_folder, recipe)
       if ! File.exist? recipefile
-        $stderr.puts "ERROR: Recipe #{recipefile} does not exist"
+        $stderr.puts "ERROR: Recipe file #{recipefile} does not exist"
         exit(1)
       elsif ! File.readable? recipefile
         $stderr.puts "ERROR: Recipe file #{recipefile} is not readable"
         exit(1)
       end
-      YAML::load_file(recipefile).symbolize_keys
+      
+      recipe = {}
+      
+      begin
+        recipe = YAML::load_file(recipefile).symbolize_keys
+      rescue Exception => e
+        $stderr.puts "ERROR: Problem parsing recipe file #{recipefile}"
+        $stderr.puts e
+        exit(1)
+      end
+      
+      recipe
     end
 
     def init_config(configfile)
