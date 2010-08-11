@@ -42,12 +42,42 @@ class TestRecipes < Test::Unit::TestCase
       should 'report error and exit' do
         recipefile = File.join('recipes_folder', 'recipe')
         File.stubs(:exist?).with(recipefile).returns(true)
-        File.expects(:readable?).with(recipefile).returns(true)
+        File.stubs(:readable?).with(recipefile).returns(true)
         YAML.expects(:load_file).with(recipefile).raises(Exception)
         err = capture_stderr { assert_raise(SystemExit) { @aggregator.feed_me('recipe') } }
         assert_match /ERROR: Problem parsing recipe file #{recipefile}/, err.string
       end
     end
+    
+    context "and a recipe file" do
+      setup do
+        recipefile = File.join('recipes_folder', 'recipe')
+        File.stubs(:exist?).with(recipefile).returns(true)
+        File.stubs(:readable?).with(recipefile).returns(true)
+        YAML.stubs(:load_file).with(recipefile).returns({
+          'feeds'       => [{ 'name' => 'feed', 'url'  => 'http://test.com/feed.xml' }],
+          'theme'       => 'theme',
+          'output_file' => File.join('output_folder', 'output_file')
+        })
+      end
+      
+      context 'with an invalid output file' do
+        should 'report error and exit' do
+          File.expects(:exist?).with('output_folder').returns(false)
+          err = capture_stderr { assert_raise(SystemExit) { @aggregator.feed_me('recipe') } }
+          assert_match /ERROR: Output folder output_folder does not exist/, err.string
+        end
+      end
 
+      context "and an unwritable output file" do
+        should 'report error and exit' do
+          File.stubs(:exist?).with('output_folder').returns(true)
+          File.expects(:writable?).with('output_folder').returns(false)
+          err = capture_stderr { assert_raise(SystemExit) { @aggregator.feed_me('recipe') } }
+          assert_match /ERROR: Output folder output_folder is not writable/, err.string
+        end
+      end
+      
+    end
   end
 end

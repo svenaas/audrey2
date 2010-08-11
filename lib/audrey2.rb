@@ -66,10 +66,12 @@ module Audrey2
       begin
         # Load recipe and theme and make sure everything is in order
         recipe = load_recipe(recipe_name)
-        init_theme(recipe[:theme])
         output_file = recipe[:output_file]
         verify_output_file(output_file)
         max_entries = recipe[:max_entries] || 1000
+
+        # Load theme
+        init_theme(recipe[:theme])
 
         # Download and parse the feeds
         entry_sources = {}
