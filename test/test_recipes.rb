@@ -48,20 +48,21 @@ class TestRecipes < Test::Unit::TestCase
         assert_match /ERROR: Problem parsing recipe file #{recipefile}/, err.string
       end
     end
-    
+
     context "and a recipe file" do
       setup do
         recipefile = File.join('recipes_folder', 'recipe')
+        @outputfile = File.join('output_folder', 'output_file')
         File.stubs(:exist?).with(recipefile).returns(true)
         File.stubs(:readable?).with(recipefile).returns(true)
         YAML.stubs(:load_file).with(recipefile).returns({
           'feeds'       => [{ 'name' => 'feed', 'url'  => 'http://test.com/feed.xml' }],
           'theme'       => 'theme',
-          'output_file' => File.join('output_folder', 'output_file')
+          'output_file' => @outputfile
         })
       end
-      
-      context 'with an invalid output file' do
+
+      context 'with an invalid output folder' do
         should 'report error and exit' do
           File.expects(:exist?).with('output_folder').returns(false)
           err = capture_stderr { assert_raise(SystemExit) { @aggregator.feed_me('recipe') } }
@@ -69,7 +70,7 @@ class TestRecipes < Test::Unit::TestCase
         end
       end
 
-      context "and an unwritable output file" do
+      context "and an unwritable output folder" do
         should 'report error and exit' do
           File.stubs(:exist?).with('output_folder').returns(true)
           File.expects(:writable?).with('output_folder').returns(false)
@@ -77,7 +78,20 @@ class TestRecipes < Test::Unit::TestCase
           assert_match /ERROR: Output folder output_folder is not writable/, err.string
         end
       end
-      
+
+      context "and an existing but unwritable output file" do
+        setup do
+          File.stubs(:exist?).with('output_folder').returns(true)
+          File.stubs(:writable?).with('output_folder').returns(true)
+        end
+
+        should 'report error and exit' do
+          File.expects(:exist?).with(@outputfile).returns(true)
+          File.expects(:writable?).with(@outputfile).returns(false)
+          err = capture_stderr { assert_raise(SystemExit) { @aggregator.feed_me('recipe') } }
+          assert_match /ERROR: Output file #{@outputfile} is not writable/, err.string
+        end
+      end
     end
   end
 end
