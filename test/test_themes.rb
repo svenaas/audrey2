@@ -25,7 +25,7 @@ class TestThemes < Test::Unit::TestCase
         'feeds'       => [{ 'name' => 'feed', 'url'  => 'http://test.com/feed.xml' }],
         'theme'       => 'theme',
         'output_file' =>  outputfile
-      })      
+      })
       File.stubs(:exist?).with('output_folder').returns(true)
       File.stubs(:writable?).with('output_folder').returns(true)
       File.stubs(:exist?).with(outputfile).returns(false)
@@ -52,12 +52,12 @@ class TestThemes < Test::Unit::TestCase
 
     context "and a valid theme folder" do
       setup do
-        @theme_path = File.join('themes_folder', 'theme')        
+        @theme_path = File.join('themes_folder', 'theme')
         File.stubs(:exist?).with(@theme_path).returns(true)
         File.stubs(:readable?).with(@theme_path).returns(true)
         @entry_template_path = File.join(@theme_path, 'entry.haml')
       end
-      
+
       context "and a nonexistent entry template file" do
         should 'report error and exit' do
           File.expects(:exist?).with(@entry_template_path).returns(false)
@@ -74,25 +74,25 @@ class TestThemes < Test::Unit::TestCase
           assert_match /ERROR: Entry template #{@entry_template_path} is not readable/, err.string
         end
       end
-      
+
       context "and an entry template file" do
         setup do
           File.stubs(:exist?).with(@entry_template_path).returns(true)
           File.stubs(:readable?).with(@entry_template_path).returns(true)
-          @helpers_file_path = File.join(@theme_path, 'helpers.rb')   
+          @helpers_file_path = File.join(@theme_path, 'helpers.rb')
         end
-        
+
         # TODO: Test this when the code proceeds, not in the midst of testing failures
         # should "load the entry template" do
         #   File.expects(:read).with(@entry_template_path).returns('Template code')
-        #   assert_equal 'Template code', @aggregator.instance_variable_get('@entry_template')          
+        #   assert_equal 'Template code', @aggregator.instance_variable_get('@entry_template')
         # end
-        
+
         context "and an unreadable helpers file" do
           setup do
             File.stubs(:read).with(@entry_template_path).returns('Template code')
           end
-          
+
           should 'report error and exit' do
             File.expects(:exist?).with(@helpers_file_path).returns(true)
             File.expects(:readable?).with(@helpers_file_path).returns(false)
@@ -101,7 +101,7 @@ class TestThemes < Test::Unit::TestCase
           end
         end
       end
-        
+
     end
   end
 end

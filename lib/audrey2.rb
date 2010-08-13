@@ -80,7 +80,7 @@ module Audrey2
         # Aggregate and sort the entries
         entries = []
         feeds.each { |feed| entries += feed.entries }
-        sort!(entries)
+        entries.sort! &entry_sort_comparator
 
         # Prepare template evaluation scope including any helper code defined in the theme
         scope = Object.new
@@ -190,11 +190,11 @@ EOF
       end
     end
 
-    # Uses the sort order specified in configuration
-    def sort!(entries)
-      case @sort
+    # Implements sort orders which may be specified in configuration    
+    def entry_sort_comparator(sort = @sort) # Defaults to the sort order specified in configuration
+      case sort
       when 'reverse-chronological'
-        entries.sort! {|a, b| b.date_published <=> a.date_published } # Reverse chronological
+        Proc.new {|a, b| b.date_published <=> a.date_published } 
       end
     end
 
@@ -215,6 +215,13 @@ EOF
 
       raise "Feed #{feed[:name]} at #{feed[:url]} does not appear to be a parsable feed" unless parsed_feed
 
+      # Sort and truncate the entries if max_entries argument is present
+      if feed[:max_entries]
+        parsed_feed.entries.sort!(&entry_sort_comparator)
+        parsed_feed.entries.slice!(feed[:max_entries], parsed_feed.entries.size - feed[:max_entries])
+      end
+      
+      # Store the entry sources. TODO: Store this information in the entries themselves
       parsed_feed.entries.each { |entry| entry_sources[entry] = feed }
 
       parsed_feed
