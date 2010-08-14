@@ -35,7 +35,7 @@ class TestOptions < Test::Unit::TestCase
         assert_equal @entry3, @entries[0]
         assert_equal @entry1, @entries[1]
         assert_equal @entry2, @entries[2]
-        @entries.sort! &@aggregator.send(:entry_sort_comparator, 'reverse_chronological')
+        @entries.sort! &@aggregator.send(:entry_sort_comparator, :reverse_chronological)
         assert_equal @entry3, @entries[0]
         assert_equal @entry2, @entries[1]
         assert_equal @entry1, @entries[2]        
@@ -45,7 +45,7 @@ class TestOptions < Test::Unit::TestCase
         assert_equal @entry3, @entries[0]
         assert_equal @entry1, @entries[1]
         assert_equal @entry2, @entries[2]
-        @entries.sort! &@aggregator.send(:entry_sort_comparator, 'chronological')
+        @entries.sort! &@aggregator.send(:entry_sort_comparator, :chronological)
         assert_equal @entry1, @entries[0]
         assert_equal @entry2, @entries[1]
         assert_equal @entry3, @entries[2]        

@@ -97,7 +97,7 @@ class TestConfig < Test::Unit::TestCase
           end
 
           should "use the default sort" do
-            assert_equal 'reverse-chronological', @aggregator.instance_variable_get('@sort')
+            assert_equal :reverse_chronological, @aggregator.instance_variable_get('@sort')
           end
 
           should "not setup email" do
@@ -135,7 +135,7 @@ class TestConfig < Test::Unit::TestCase
       end
 
       should "use the specified sort" do
-        assert_equal 'sort', @aggregator.instance_variable_get('@sort')
+        assert_equal :sort, @aggregator.instance_variable_get('@sort')
       end
 
       # TODO: Fix this one later once email config consistency checking (and testing) are implemented

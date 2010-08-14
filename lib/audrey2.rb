@@ -193,9 +193,9 @@ EOF
     # Implements sort orders which may be specified in configuration    
     def entry_sort_comparator(sort = @sort) # Defaults to the sort order specified in configuration
       case sort
-      when 'reverse_chronological'
+      when :reverse_chronological
         Proc.new {|a, b| b.date_published <=> a.date_published } 
-      when 'chronological'
+      when :chronological
         Proc.new {|a, b| a.date_published <=> b.date_published } 
       end
     end
@@ -290,7 +290,7 @@ EOF
       end
 
       @user_agent = config[:user_agent] || 'Audrey 2.0 Feed Aggregator'
-      @sort = config[:sort] || 'reverse-chronological'
+      @sort = (config[:sort] || 'reverse_chronological').to_sym
 
       if @email = config[:email]
         gem 'mail', '~> 2.2.5'
