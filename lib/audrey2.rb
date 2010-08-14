@@ -193,8 +193,10 @@ EOF
     # Implements sort orders which may be specified in configuration    
     def entry_sort_comparator(sort = @sort) # Defaults to the sort order specified in configuration
       case sort
-      when 'reverse-chronological'
+      when 'reverse_chronological'
         Proc.new {|a, b| b.date_published <=> a.date_published } 
+      when 'chronological'
+        Proc.new {|a, b| a.date_published <=> b.date_published } 
       end
     end
 
