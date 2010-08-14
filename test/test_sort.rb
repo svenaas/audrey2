@@ -9,8 +9,7 @@ class TestOptions < Test::Unit::TestCase
       YAML.stubs(:load_file).with('configfile').returns({
         'recipes_folder' => 'recipes_folder',
         'themes_folder'  => 'themes_folder',
-        'user_agent'     => 'user_agent',
-        'sort'           => 'sort'
+        'user_agent'     => 'user_agent'
       })
       File.stubs(:exist?).with('recipes_folder').returns(true)
       File.stubs(:readable?).with('recipes_folder').returns(true)
@@ -50,6 +49,16 @@ class TestOptions < Test::Unit::TestCase
         assert_equal @entry2, @entries[1]
         assert_equal @entry3, @entries[2]        
       end
+      
+      should "sort in reverse order by default" do
+        assert_equal @entry3, @entries[0]
+        assert_equal @entry1, @entries[1]
+        assert_equal @entry2, @entries[2]
+        @entries.sort! &@aggregator.send(:entry_sort_comparator, :reverse_chronological)
+        assert_equal @entry3, @entries[0]
+        assert_equal @entry2, @entries[1]
+        assert_equal @entry1, @entries[2]        
+      end      
       
     end
   end
