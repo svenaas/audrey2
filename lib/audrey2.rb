@@ -6,14 +6,14 @@ require 'haml'
 require 'optparse'
 
 module HashExtensions # Adapted from http://gist.github.com/151324 by Avdi Grimm and Paul Berry
-  def symbolize_keys
+  def recursively_symbolize_keys
     inject({}) do |acc, (k,v)|
       key = String === k ? k.to_sym : k
       value = case v
         when Hash
-          v.symbolize_keys
+          v.recursively_symbolize_keys
         when Array
-          v.collect { |e| Hash === e ? e.symbolize_keys : e }
+          v.collect { |e| Hash === e ? e.recursively_symbolize_keys : e }
         else
           v
         end
@@ -242,7 +242,7 @@ EOF
       recipe = {}
 
       begin
-        recipe = YAML::load_file(recipefile).symbolize_keys
+        recipe = YAML::load_file(recipefile).recursively_symbolize_keys
       rescue Exception => e
         $stderr.puts "ERROR: Problem parsing recipe file #{recipefile}"
         $stderr.puts e
@@ -264,7 +264,7 @@ EOF
       config = {}
 
       begin
-        config = YAML::load_file(configfile).symbolize_keys
+        config = YAML::load_file(configfile).recursively_symbolize_keys
       rescue Exception => e
         $stderr.puts "ERROR: Problem parsing configuration file #{configfile}"
         $stderr.puts e
