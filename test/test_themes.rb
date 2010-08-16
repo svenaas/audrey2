@@ -82,7 +82,10 @@ class TestThemes < Test::Unit::TestCase
           @helpers_file_path = File.join(@theme_path, 'helpers.rb')
         end
 
-        # TODO: Test this when the code proceeds, not in the midst of testing failures
+        # Note: A stab at the following is being taken in test_parse.rb, but I'm really
+        # not sure it belongs there. The challenge is to test things like this which 
+        # happen when everything is proceeding as it should, but without needing to test
+        # events which occur later (like the actual parsing, aggregation, and output).
         # should "load the entry template" do
         #   File.expects(:read).with(@entry_template_path).returns('Template code')
         #   assert_equal 'Template code', @aggregator.instance_variable_get('@entry_template')
