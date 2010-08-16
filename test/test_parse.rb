@@ -1,7 +1,7 @@
 require 'helper'
 
 class TestParse < Test::Unit::TestCase
-  context "With an initialized Aggregator and all configuration met" do
+  context "With an initialized Aggregator and all configuration met (no email)" do
     setup do
       @config
       File.stubs(:exist?).with('configfile').returns(true)
@@ -38,11 +38,8 @@ class TestParse < Test::Unit::TestCase
       File.stubs(:readable?).with(entry_template_path).returns(true)   
       File.stubs(:read).with(entry_template_path).returns('%p= entry.title')
       helpers_file_path = File.join(theme_path, 'helpers.rb')      
-      File.stubs(:exist?).with(helpers_file_path).returns(false)          
-    end
-
-    should 'parse' do
-      @aggregator.expects(:open).with('http://test.com/feed.xml', {'User-Agent' => 'user_agent'}).returns(<<-EOF
+      File.stubs(:exist?).with(helpers_file_path).returns(false)      
+      @feed_content =<<-EOF
 <?xml version="1.0"?>
 <rss version="2.0">
   <channel>
@@ -58,12 +55,33 @@ class TestParse < Test::Unit::TestCase
   </channel>
 </rss>
 EOF
-)
+    end
+
+    should 'download, parse, and write templatized output' do
+      @aggregator.expects(:open).with('http://test.com/feed.xml', {'User-Agent' => 'user_agent'}).returns(@feed_content)
       s = StringIO.new
       s.expects(:<<).with("<p>Title</p>\n")
       File.expects(:open).with(File.join('output_folder', 'output_file'), 'w').yields s
       @aggregator.feed_me('recipe')
       assert_equal '%p= entry.title', @aggregator.instance_variable_get('@entry_template')
     end
+    
+    should 'report feed-opening error via exit' do 
+      @aggregator.expects(:open).with('http://test.com/feed.xml', {'User-Agent' => 'user_agent'}).raises(Exception.new('404 Not Found'))
+      err = capture_stderr { assert_raise(SystemExit) { @aggregator.feed_me('recipe') } }
+      assert err.string =~ /An exception occurred while running recipe recipe:/
+      assert err.string =~ /Exception occurred when opening feed feed at http:\/\/test.com\/feed.xml:/
+      assert err.string =~ /404 Not Found/
+    end
+
+    should 'report feed-parsing error via exit' do 
+      @aggregator.stubs(:open).with('http://test.com/feed.xml', {'User-Agent' => 'user_agent'}).returns(@feed_content)
+      FeedNormalizer::FeedNormalizer.expects(:parse).with(@feed_content).raises(Exception.new("Parsing exception"))
+      err = capture_stderr { assert_raise(SystemExit) { @aggregator.feed_me('recipe') } }
+      assert err.string =~ /An exception occurred while running recipe recipe:/
+      assert err.string =~ /Exception occurred when parsing feed feed which was downloaded from http:\/\/test.com\/feed.xml:/
+      assert err.string =~ /Parsing exception/
+    end
+
   end
 end
