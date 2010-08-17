@@ -5,13 +5,13 @@
 
 Gem::Specification.new do |s|
   s.name = %q{audrey2}
-  s.version = "0.2.1"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sven Aas"]
-  s.date = %q{2010-07-30}
+  s.date = %q{2010-08-17}
   s.default_executable = %q{feedme}
-  s.description = %q{Gem for feed processing and aggregation}
+  s.description = %q{Audrey 2.0 is a command-line utility for customizable feed processing, aggregation, and output.}
   s.email = %q{sven.aas@gmail.com}
   s.executables = ["feedme"]
   s.extra_rdoc_files = [
@@ -28,13 +28,33 @@ Gem::Specification.new do |s|
      "audrey2.conf.sample",
      "audrey2.gemspec",
      "bin/feedme",
-     "lib/audrey2.rb"
+     "lib/audrey2.rb",
+     "test/helper.rb",
+     "test/test_config.rb",
+     "test/test_email.rb",
+     "test/test_misc.rb",
+     "test/test_options.rb",
+     "test/test_parse.rb",
+     "test/test_recipes.rb",
+     "test/test_sort.rb",
+     "test/test_themes.rb"
   ]
   s.homepage = %q{http://github.com/svenaas/audrey2}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
-  s.summary = %q{Gem for feed processing and aggregation}
+  s.summary = %q{Feed processing and aggregation}
+  s.test_files = [
+    "test/helper.rb",
+     "test/test_config.rb",
+     "test/test_email.rb",
+     "test/test_misc.rb",
+     "test/test_options.rb",
+     "test/test_parse.rb",
+     "test/test_recipes.rb",
+     "test/test_sort.rb",
+     "test/test_themes.rb"
+  ]
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
@@ -43,13 +63,19 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<feed-normalizer>, ["~> 1.5.2"])
       s.add_runtime_dependency(%q<haml>, ["~> 3.0.13"])
+      s.add_development_dependency(%q<shoulda>, [">= 2.11.1"])
+      s.add_development_dependency(%q<mocha>, [">= 0.9.8"])
     else
       s.add_dependency(%q<feed-normalizer>, ["~> 1.5.2"])
       s.add_dependency(%q<haml>, ["~> 3.0.13"])
+      s.add_dependency(%q<shoulda>, [">= 2.11.1"])
+      s.add_dependency(%q<mocha>, [">= 0.9.8"])
     end
   else
     s.add_dependency(%q<feed-normalizer>, ["~> 1.5.2"])
     s.add_dependency(%q<haml>, ["~> 3.0.13"])
+    s.add_dependency(%q<shoulda>, [">= 2.11.1"])
+    s.add_dependency(%q<mocha>, [">= 0.9.8"])
   end
 end
 
