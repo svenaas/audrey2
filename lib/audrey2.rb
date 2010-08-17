@@ -125,14 +125,15 @@ EOF
       mail[:to] =      @email[:to]
       mail[:subject] = "[AUDREY 2.0] Exception Notification"
       mail[:body]    = e
-
-      case @email[:via]
+      
+      @email[:via] ||= 'sendmail' # Do this somewhere else?
+      case @email[:via].to_sym    # Do this somewhere else too?
       when :sendmail
         mail.delivery_method :sendmail
       when :smtp
         raise "Missing SMTP configuration" unless @email[:smtp]
         smtp = {
-          :address        => @email[:smtp][:server]         || 'localhost',
+          :address        => @email[:smtp][:address]        || 'localhost',
           :port           => @email[:smtp][:port]           || 25
         }
         smtp[:domain]         = @email[:smtp][:domain]         if @email[:smtp][:domain]

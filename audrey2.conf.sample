@@ -31,7 +31,7 @@ themes_folder:   ./themes
 #   from: Audrey 2.0 <noreply@test.com>
 #   via: smtp
 #   smtp:
-#     server: smtp.test.com
+#     address: smtp.test.com
 #     port: 25
 #     user_name: test
 #     password: password
