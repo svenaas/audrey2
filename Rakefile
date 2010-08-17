@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name        = "audrey2"
-    gem.summary     = "Gem for feed processing and aggregation"
-    gem.description = "Gem for feed processing and aggregation"
+    gem.summary     = "Feed processing and aggregation"
+    gem.description = "Audrey 2.0 is a command-line utility for customizable feed processing, aggregation, and output."
     gem.email       = "sven.aas@gmail.com"
     gem.homepage    = "http://github.com/svenaas/audrey2"
     gem.authors     = ["Sven Aas"]

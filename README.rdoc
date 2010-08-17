@@ -7,6 +7,20 @@ Audrey 2.0 is a gem for feed processing and aggregation.
 The initial codebase is an adaptation of several other prototypes. It suffers from
 severe shortages of documentation and testing. Both are coming soon.
 
+== Release notes 
+
+The 0.3.0 version of Audrey 2.0 makes three changes which could break compatibility with
+existing installations. They are all very easy to deal with:
+
+1) The default location of the configuration file has moved from /etc/audrey2/audrey2.conf
+to /etc/audrey2.conf
+
+2) In a theme's entry.haml when you reference data in the entry hash you now need to index 
+the hash using symbols rather than strings: entry[:title] replaces entry['title'].
+
+3) If email notification of errors is configured via SMTP you now need to identify the 
+SMTP server with the key 'address' instead of 'server' in Audrey 2.0's configuration file.
+
 == Installation
 
 gem install audrey2
