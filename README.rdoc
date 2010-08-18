@@ -15,8 +15,8 @@ existing installations. They are all very easy to deal with:
 1) The default location of the configuration file has moved from /etc/audrey2/audrey2.conf
 to /etc/audrey2.conf
 
-2) In a theme's entry.haml when you reference data in the entry hash you now need to index 
-the hash using symbols rather than strings: entry[:title] replaces entry['title'].
+2) In a theme's entry.haml when you reference data in the source hash you now need to index 
+the hash using symbols rather than strings: source[:name] replaces source['name'].
 
 3) If email notification of errors is configured via SMTP you now need to identify the 
 SMTP server with the key 'address' instead of 'server' in Audrey 2.0's configuration file.
