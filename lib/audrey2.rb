@@ -24,6 +24,28 @@ module HashExtensions # Adapted from http://gist.github.com/151324 by Avdi Grimm
 end
 Hash.send(:include, HashExtensions)
 
+# Monkeypatch to get alternate link rather than comments Atom feed for blogspot Atom feed entries
+# Adapted from https://github.com/jbrownlee/AIFeeds/blob/master/part1/parserss.rb
+module FeedNormalizer
+  class SimpleRssParser < Parser
+    def self.parse(xml, loose)
+      begin
+        atomrss = parser.parse(xml)
+      rescue Exception => e
+        return nil
+      end
+
+      atomrss.items.each do |item|
+        if item[:'link+alternate']
+          item[:link] = item[:'link+alternate']
+        end
+      end
+
+      package(atomrss)
+    end
+  end
+end
+
 module Audrey2
   class Options
     def self.parse(args)
@@ -125,7 +147,7 @@ EOF
       mail[:to] =      @email[:to]
       mail[:subject] = "[AUDREY 2.0] Exception Notification"
       mail[:body]    = e
-      
+
       @email[:via] ||= 'sendmail' # Do this somewhere else?
       case @email[:via].to_sym    # Do this somewhere else too?
       when :sendmail
@@ -191,13 +213,13 @@ EOF
       end
     end
 
-    # Implements sort orders which may be specified in configuration    
+    # Implements sort orders which may be specified in configuration
     def entry_sort_comparator(sort = @sort) # Defaults to the sort order specified in configuration
       case sort
       when :reverse_chronological
-        Proc.new {|a, b| b.date_published <=> a.date_published } 
+        Proc.new {|a, b| b.date_published <=> a.date_published }
       when :chronological
-        Proc.new {|a, b| a.date_published <=> b.date_published } 
+        Proc.new {|a, b| a.date_published <=> b.date_published }
       end
     end
 
@@ -223,7 +245,7 @@ EOF
         parsed_feed.entries.sort!(&entry_sort_comparator)
         parsed_feed.entries.slice!(feed[:max_entries], parsed_feed.entries.size - feed[:max_entries])
       end
-      
+
       # Store the entry sources. TODO: Store this information in the entries themselves
       parsed_feed.entries.each { |entry| entry_sources[entry] = feed }
 
