@@ -11,9 +11,9 @@ begin
     gem.homepage    = "http://github.com/svenaas/audrey2"
     gem.authors     = ["Sven Aas"]
     gem.add_dependency "feed-normalizer", "~>1.5.2"
-    gem.add_dependency "haml", "~>3.0.13"    
+    gem.add_dependency "haml", "~>3.0.13"
     gem.add_development_dependency "shoulda", ">= 2.11.1"
-    gem.add_development_dependency "mocha", ">= 0.9.8"    
+    gem.add_development_dependency "mocha", ">= 0.9.8"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
@@ -45,7 +45,7 @@ task :test => :check_dependencies
 
 task :default => :test
 
-require 'rake/rdoctask'
+require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
